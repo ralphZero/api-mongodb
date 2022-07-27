@@ -2,7 +2,7 @@
 import express from 'express';
 
 // import route functions
-import { getCars, addCar, updateCar } from './src/cars.js';
+import { getAllCars, addCar, updateCar } from './src/cars.js';
 // create a new server instance
 const app = express();
 
@@ -14,7 +14,7 @@ app.use(express.json());
 
 // -- define the routes --
 // get all cars from db
-app.get('/cars', getCars);
+app.get('/cars', getAllCars);
 
 // create new car
 app.post('/cars', addCar);

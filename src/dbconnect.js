@@ -10,3 +10,13 @@ export const client = new MongoClient(uri, {
     useUnifiedTopology: true, 
     serverApi: ServerApiVersion.v1
 });
+
+export const serve = (res, next) => {
+    client.connect((err) => {
+        if(!err) {
+            next(client.db('test'));
+        } else {
+            res.send(err);
+        }
+    })
+}
