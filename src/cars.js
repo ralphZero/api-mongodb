@@ -20,15 +20,6 @@ export const getCars = (req, res) => {
     });
 };
 
-export const getAllCars = (req, res) => {
-    serve(res, (db) => {
-        db.collection('cars').find().toArray((err, result) => {
-            if(err) res.status(500).send(err);
-            if(result) res.json(result);
-            client.close();
-        });
-    });
-}
 
 // add new car : POST
 export const addCar = (req, res) => {
