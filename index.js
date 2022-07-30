@@ -2,7 +2,7 @@
 import express from 'express';
 
 // import route functions
-import { getAllCars, addCar, updateCar } from './src/cars.js';
+import { getCars, addCar } from './src/cars.js';
 // create a new server instance
 const app = express();
 
@@ -14,13 +14,11 @@ app.use(express.json());
 
 // -- define the routes --
 // get all cars from db
-app.get('/cars', getAllCars);
+app.get('/cars', getCars);
 
 // create new car
 app.post('/cars', addCar);
 
-// update an existing car
-app.patch('/cars/:id', updateCar);
 
 // listen to the server on the specified port
 app.listen(PORT, () => {
