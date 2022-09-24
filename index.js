@@ -22,6 +22,9 @@ app.get('/cars', cars.getCars);
 // create new car
 app.post('/cars', cars.addCar);
 
+// update car
+app.post('/update/:id', cars.update)
+
 
 // listen to the server on the specified port
 app.listen(3000, () => {

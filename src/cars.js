@@ -28,9 +28,19 @@ async function  getCars(req, res){
  }
 
 // update car with id
+async function update(req, res){
+    const updateCar = await car.findByIdAndUpdate({_id: req.params.id}, {
+        carName: req.body.carName,
+         YearOfProduction: req.body.YearOfProduction,
+         carModel: req.body.carModel,
+         carColor:req.body.carColor
+    })
+    res.send({data: updateCar})
+}
  
 
 module.exports={
     addCar: addCar,
-    getCars: getCars
+    getCars: getCars,
+    update: update
 }
