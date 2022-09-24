@@ -1,62 +1,36 @@
 // import mongoClient
-import { client } from './dbconnect.js';
-import { ObjectId } from 'mongodb';
+const car = require('./schema')
 
 
 
 // get all cars: GET
-export const getCars = (req, res) => {
-    client.connect((err) => {
-        if(err) {
-            res.status(500).send(err);
-            return;
-        }
-        const collection = client.db('test').collection('cars');
-        collection.find().toArray((err, result) => {
-            if(err) res.status(500).send(err);
-            if(result) res.json(result);
-            client.close();
-        });
-    });
-};
+async function  getCars(req, res){
+    const getAllCars = await car.find(req.body);
+    if(!getAllCars){
+        return res.send({Error: "No available cars"})
+    }
+    res.send({cars : getAllCars})
+ }
 
 
 // add new car : POST
-export const addCar = (req, res) => {
-    client.connect((err) => {
-        if(err) {
-            res.status(500).send(err);
-            return;
-        }
-        const car = req.body;
-        const collection = client.db('test').collection('cars');
-        collection.insertOne(car, (err, result) => {
-            if(err) res.status(500).send(err);
-            if(result) res.json(result);
-            client.close();
-        });
-    });
-    
-};
+ async function addCar(req, res){
+    const addCar = new car({
+         carName: req.body.carName,
+         YearOfProduction: req.body.YearOfProduction,
+         carModel: req.body.carModel,
+         carColor:req.body.carColor
+    })
+
+    await addCar.save();
+
+    res.send({data: addCar})
+ }
 
 // update car with id
-export const updateCar = (req, res) => {
-    client.connect((err) => {
-        if(err) {
-            res.status(500).send(err);
-            return;
-        }
-        const carId = req.params.id;
-        const car = req.body;
-        const collection = client.db('test').collection('cars');
-        collection.updateOne(
-            { _id: ObjectId(carId) },
-            {  $set: car },
-            (err, result) => {
-                if(err) res.status(500).send(err);
-                if(result) res.json(result);
-                client.close();
-            }
-        )
-    })
-};
+ 
+
+module.exports={
+    addCar: addCar,
+    getCars: getCars
+}
