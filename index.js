@@ -19,11 +19,17 @@ app.use(express.json());
 // get all cars from db
 app.get('/cars', cars.getCars);
 
+//get a particular car
+app.get('/car/:id', cars.uniqueCar)
+
 // create new car
 app.post('/cars', cars.addCar);
 
 // update car
 app.post('/update/:id', cars.update)
+
+//delete car
+app.delete('/del/:id', cars.del)
 
 
 // listen to the server on the specified port
