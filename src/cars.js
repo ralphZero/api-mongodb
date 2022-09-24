@@ -1,62 +1,64 @@
 // import mongoClient
-import { client } from './dbconnect.js';
-import { ObjectId } from 'mongodb';
+const { application } = require('express');
+const car = require('./schema')
 
 
 
 // get all cars: GET
-export const getCars = (req, res) => {
-    client.connect((err) => {
-        if(err) {
-            res.status(500).send(err);
-            return;
-        }
-        const collection = client.db('test').collection('cars');
-        collection.find().toArray((err, result) => {
-            if(err) res.status(500).send(err);
-            if(result) res.json(result);
-            client.close();
-        });
-    });
-};
+async function  getCars(req, res){
+    const getAllCars = await car.find(req.body);
+    if(!getAllCars){
+        return res.send({Error: "No available cars"})
+    }
+    res.send({cars : getAllCars})
+ }
+
+ //find a particular car
+ async function uniqueCar(req, res){
+   const getUnique = await car.findById({_id: req.params.id});
+   if(!getUnique){
+    return res.send({Errormessage: "Can't find Car"})
+   }
+   return res.send({UniqueCar: getUnique})
+ }
 
 
 // add new car : POST
-export const addCar = (req, res) => {
-    client.connect((err) => {
-        if(err) {
-            res.status(500).send(err);
-            return;
-        }
-        const car = req.body;
-        const collection = client.db('test').collection('cars');
-        collection.insertOne(car, (err, result) => {
-            if(err) res.status(500).send(err);
-            if(result) res.json(result);
-            client.close();
-        });
-    });
-    
-};
+ async function addCar(req, res){
+    const addCar = new car({
+         carName: req.body.carName,
+         YearOfProduction: req.body.YearOfProduction,
+         carModel: req.body.carModel,
+         carColor:req.body.carColor
+    })
+
+    await addCar.save();
+
+    res.send({data: addCar})
+ }
 
 // update car with id
-export const updateCar = (req, res) => {
-    client.connect((err) => {
-        if(err) {
-            res.status(500).send(err);
-            return;
-        }
-        const carId = req.params.id;
-        const car = req.body;
-        const collection = client.db('test').collection('cars');
-        collection.updateOne(
-            { _id: ObjectId(carId) },
-            {  $set: car },
-            (err, result) => {
-                if(err) res.status(500).send(err);
-                if(result) res.json(result);
-                client.close();
-            }
-        )
+async function update(req, res){
+    const updateCar = await car.findByIdAndUpdate({_id: req.params.id}, {
+        carName: req.body.carName,
+         YearOfProduction: req.body.YearOfProduction,
+         carModel: req.body.carModel,
+         carColor:req.body.carColor
     })
-};
+    res.send({data: updateCar})
+}
+
+//Delete car by id
+async function del(req, res){
+    const del = await car.findByIdAndRemove({_id: req.params.id})
+  res.send({data: "Delete successful"})
+}
+ 
+
+module.exports={
+    addCar: addCar,
+    getCars: getCars,
+    update: update,
+    del: del,
+    uniqueCar: uniqueCar
+}
